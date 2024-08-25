@@ -29,13 +29,15 @@ public class Main {
             }
 
             try {
-                cc.depositar(-100);  // Isto lançará uma ValorNegativoException
+                cc.depositar(valor);  // Isto lançará uma ValorNegativoException
             } catch (ValorNegativoException e) {
                 System.out.println("Erro: " + e.getMessage());
             }
 
+            System.out.println("Digite um valor para sacar");
+            valor = entrada.nextDouble();
             try {
-                cc.sacar(1200);  // Isto lançará uma SemLimiteException
+                cc.sacar(valor);  // Isto lançará uma SemLimiteException
             } catch (ValorNegativoException e) {
                 System.out.println("Erro: " + e.getMessage());
             } catch (SemLimiteException e) {

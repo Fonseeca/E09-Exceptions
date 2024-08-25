@@ -5,15 +5,10 @@ import java.util.List;
 public abstract class Conta implements ITaxas {
 
     private int numero;
-
     private Cliente dono;
-
     private double saldo;
-
     protected double limite;
-
     private List<Operacao> operacoes;
-
     private static int totalContas = 0;
 
     public Conta(int numero, Cliente dono, double saldo, double limite) {
@@ -21,35 +16,26 @@ public abstract class Conta implements ITaxas {
         this.dono = dono;
         this.saldo = saldo;
         this.limite = limite;
-
         this.operacoes = new ArrayList<>();
-
         Conta.totalContas++;
     }
 
     public boolean sacar(double valor) {
-        if (valor < 0)
+        if (valor < 0) {
             throw new ValorNegativoException("O valor do saque não pode ser negativo.");
-        else{
-            this.saldo -= valor;
-            this.operacoes.add(new OperacaoSaque(valor));
-            return true;
-        }
-        if (valor > this.saldo)
+        } else if (valor > (this.saldo + this.limite)) {
             throw new SemLimiteException("Saldo insuficiente para o saque.");
-        else{
+        } else {
             this.saldo -= valor;
             this.operacoes.add(new OperacaoSaque(valor));
             return true;
         }
-
-        return false;
     }
 
-    public void depositar(double valor) throws ArithmeticException {
-        if (valor < 0)
-            throw new ArithmeticException("Erro. Valor negativo depositado.");
-
+    public void depositar(double valor) {
+        if (valor < 0) {
+            throw new ValorNegativoException("Erro. Valor negativo depositado.");
+        }
         this.saldo += valor;
         this.operacoes.add(new OperacaoDeposito(valor));
     }
@@ -93,7 +79,7 @@ public abstract class Conta implements ITaxas {
         }
 
         System.out.println("======= Extrato Conta " + this.numero + "======");
-        for(Operacao atual : operacoesParaExtrato) {
+        for (Operacao atual : operacoesParaExtrato) {
             System.out.println(atual);
         }
         System.out.println("====================");
@@ -101,12 +87,12 @@ public abstract class Conta implements ITaxas {
 
     public void imprimirExtratoTaxas() {
         System.out.println("=== Extrato de Taxas ===");
-        System.out.printf("Manutenção:\t%.2f\n", this.calcularTaxas());
-
         double totalTaxas = this.calcularTaxas();
+        System.out.printf("Manutenção:\t%.2f\n", totalTaxas);
+
         for (Operacao atual : this.operacoes) {
             totalTaxas += atual.calcularTaxas();
-            System.out.printf("%c:\t%.2f\n", atual.getTipo(), atual.calcularTaxas());
+            System.out.printf("%s:\t%.2f\n", atual.getTipo(), atual.calcularTaxas());
         }
 
         System.out.printf("Total:\t%.2f\n", totalTaxas);
@@ -129,7 +115,7 @@ public abstract class Conta implements ITaxas {
     }
 
     public static int getTotalContas() {
-        return Conta.totalContas;
+        return totalContas;
     }
 
     public void setNumero(int numero) {
